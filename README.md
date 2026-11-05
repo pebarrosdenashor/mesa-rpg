@@ -17,13 +17,13 @@ Mesa virtual feita sob medida para jogar com os amigos: mapa com grid, tokens, r
 ### 1. Supabase (o "servidor")
 1. Crie uma conta em <https://supabase.com> e clique em **New project** (plano gratuito).
 2. No menu lateral, abra **SQL Editor**, cole todo o conteúdo de [`supabase/schema.sql`](supabase/schema.sql) e clique em **Run**.
-3. Vá em **Project Settings → API** e copie a **Project URL** e a chave **anon public**.
+3. Clique em **Connect** no topo do projeto (ou vá em **Project Settings → API Keys**) e copie a **URL do projeto** e a chave **publishable** (`sb_publishable_...`).
 4. Cole os dois valores em [`js/config.js`](js/config.js):
    ```js
    export const SUPABASE_URL = "https://xxxx.supabase.co";
-   export const SUPABASE_ANON_KEY = "eyJ...";
+   export const SUPABASE_ANON_KEY = "sb_publishable_...";
    ```
-   (A chave *anon* é feita para ficar no site; não use a *service_role*.)
+   (A chave *publishable* — ou a antiga *anon* — é feita para ficar no site; nunca use a *secret* nem a *service_role*.)
 
 ### 2. GitHub Pages (o site)
 1. Suba esta pasta para um repositório no GitHub.

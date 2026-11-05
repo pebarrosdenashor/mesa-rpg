@@ -12,6 +12,20 @@ Mesa virtual feita sob medida para jogar com os amigos: mapa com grid, tokens, r
 - **Fichas Ordem Paranormal**: atributos, PV/PE/SAN com botões +/−, NEX, defesa, todas as perícias com grau de treino, ataques (teste + dano), habilidades, inventário e anotações. Clicar num atributo ou perícia rola o teste do jeito do sistema (nº de d20 = atributo, fica com o maior; atributo 0 rola 2d20 e fica com o menor).
 - **Permissões**: cada jogador vê e edita só a própria ficha e move só os próprios tokens; o mestre vê e controla tudo, cria NPCs, troca o dono de fichas e pode deixar uma ficha visível a todos.
 
+## Extensões do Owlbear Rodeo
+
+A Mesa roda extensões feitas para o Owlbear Rodeo **sem precisar mudar nada nelas**: ela fala o mesmo "idioma" do SDK do Owlbear (`@owlbear-rodeo/sdk`). Já vêm ativadas:
+
+- **Fichas de Ordem Paranormal** — `pebarrosdenashor.github.io/fichas-ordem-paranormal`
+- **Hexatombe** — `pebarrosdenashor.github.io/hexatombe`
+- **Escudo do Mestre — Hexatombe** — `pebarrosdenashor.github.io/mestre-hexatombe`
+
+Os ícones ficam na coluna à esquerda do mapa; cada um abre a extensão numa janela que dá para arrastar. As partes que rodam em segundo plano (barras de PV/PD no token, sons, sussurros, efeitos de crítico, sino) ficam sempre ligadas. Clique com o botão direito num token para ver as opções das extensões (ex.: "Vincular à ficha aberta").
+
+Para adicionar outra extensão do Owlbear: **⚙ Cena → Extensões**, cole o link do `manifest.json` e clique em *Adicionar*. A lista vale para a mesa inteira.
+
+O que a ponte cobre: jogador e grupo, metadados da sala e da cena, mensagens entre jogadores (broadcast), itens da cena e itens locais (formas, textos, rótulos, imagens, anexos que seguem o token), menus de clique direito, janelas modais e popovers, ação da extensão, avisos, viewport e grid. Ferramentas de desenho personalizadas (`OBR.tool`), névoa e upload de cenas do Owlbear ainda não são suportadas.
+
 ## Colocar online (uma vez só, ~10 minutos)
 
 ### 1. Supabase (o "servidor")
@@ -55,6 +69,8 @@ js/sheets.js        fichas
 js/chat.js          chat e rolagens
 js/dice.js          rolador de dados
 js/app.js           lobby e cola entre as partes
+js/obr-host.js      ponte compatível com o SDK do Owlbear Rodeo
+js/dock.js          doca, janelas, modais e popovers das extensões
 supabase/schema.sql banco de dados
 ```
 

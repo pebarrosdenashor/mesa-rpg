@@ -60,6 +60,7 @@
   <div class="main">
     <div class="stage">
       <canvas id="board"></canvas>
+      <nav id="ext-dock" aria-label="Extensões"></nav>
       <div class="help">Rodinha: zoom · arrastar fundo: mover · Shift+clique: ping · duplo clique: abrir ficha · Del: apagar (mestre)</div>
 
       <div id="scene-panel" class="float" hidden>
@@ -71,6 +72,10 @@
         <label>Cada quadrado vale<div class="row"><input type="number" data-k="unit" step="0.5" min="0"><input data-k="unitName" class="sm"></div></label>
         <label>Largura do mapa (px)<input type="number" data-k="mapW" min="100"></label>
         <label>Altura do mapa (px)<input type="number" data-k="mapH" min="100"></label>
+        <h4>Extensões</h4>
+        <div id="ext-list"></div>
+        <div class="row"><input id="ext-url" placeholder="link do manifest.json"><button id="ext-add">Adicionar</button></div>
+        <p class="hint">Aceita extensões do Owlbear Rodeo: cole o link do <code>manifest.json</code>. <button id="ext-reset" class="link">Restaurar as padrão</button></p>
       </div>
 
       <div id="tok-panel" class="float tok" hidden>
@@ -95,6 +100,7 @@
         </div>
       </div>
       <div id="toast"></div>
+      <div id="notes"></div>
     </div>
 
     <aside class="side">
@@ -130,6 +136,8 @@
   </div>
 </div>
 
+<div id="ctx-menu" hidden></div>
+<div id="ext-bg" aria-hidden="true"></div>
 <script type="module" src="js/app.js"></script>
 </body>
 </html>

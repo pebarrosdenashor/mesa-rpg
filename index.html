@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mesa — RPG com os amigos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+</head>
+<body>
+
+<!-- ============ LOBBY ============ -->
+<main id="lobby">
+  <div class="lobby-card">
+    <h1>Mesa</h1>
+    <p class="tag-line">Sua mesa virtual de RPG. Mapa, tokens, dados e fichas — do seu jeito.</p>
+    <label class="field">Seu nome<input id="name" maxlength="24" placeholder="Como os outros vão te ver" autocomplete="nickname"></label>
+    <div class="lobby-actions">
+      <section>
+        <h3>Sou o mestre</h3>
+        <p>Cria uma mesa nova e te dá o link de convite.</p>
+        <button id="create" class="primary">Criar mesa</button>
+      </section>
+      <section id="join-box">
+        <h3>Vou jogar</h3>
+        <p>Cole o código ou o link que o mestre mandou.</p>
+        <div class="row"><input id="join-code" placeholder="código da mesa"><button id="join">Entrar</button></div>
+      </section>
+    </div>
+    <p id="lobby-error" class="error"></p>
+    <p id="mode-note" class="note"></p>
+  </div>
+</main>
+
+<!-- ============ MESA ============ -->
+<div id="app" hidden>
+  <header class="topbar">
+    <div class="brand">Mesa <span class="code">#<span id="room-code"></span></span></div>
+    <span id="role" class="role"></span>
+    <span id="conn" class="conn"></span>
+    <div class="tools">
+      <button data-tool="move" class="on" title="Mover (arraste tokens; arraste o fundo para navegar)">✋ Mover</button>
+      <button data-tool="ruler" title="Régua (R)">📏 Régua</button>
+      <button id="fit" title="Centralizar mapa">⤢</button>
+      <span class="sep"></span>
+      <button id="add-token" title="Adicionar token">＋ Token</button>
+      <label class="btn gm-only" title="Enviar imagem do mapa">🗺 Mapa<input id="map-file" type="file" accept="image/*" hidden></label>
+      <button id="scene-btn" class="gm-only" title="Grid e cena">⚙ Cena</button>
+    </div>
+    <div class="right">
+      <div id="people"></div>
+      <button id="invite">Convidar</button>
+      <button id="gm-link" class="gm-only ghost" title="Para abrir como mestre em outro aparelho">Link de mestre</button>
+      <button id="leave" class="ghost" title="Sair da mesa">Sair</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="stage">
+      <canvas id="board"></canvas>
+      <div class="help">Rodinha: zoom · arrastar fundo: mover · Shift+clique: ping · duplo clique: abrir ficha · Del: apagar (mestre)</div>
+
+      <div id="scene-panel" class="float" hidden>
+        <h4>Cena</h4>
+        <label>Tamanho do quadrado (px)<input type="number" data-k="grid" min="10" max="400"></label>
+        <label class="chk"><input type="checkbox" data-k="gridOn"> Mostrar grid</label>
+        <label>Cor do grid<input type="color" data-k="gridColor"></label>
+        <label>Opacidade<input type="range" data-k="gridAlpha" min="0" max="1" step="0.02"></label>
+        <label>Cada quadrado vale<div class="row"><input type="number" data-k="unit" step="0.5" min="0"><input data-k="unitName" class="sm"></div></label>
+        <label>Largura do mapa (px)<input type="number" data-k="mapW" min="100"></label>
+        <label>Altura do mapa (px)<input type="number" data-k="mapH" min="100"></label>
+      </div>
+
+      <div id="tok-panel" class="float tok" hidden>
+        <h4>Token</h4>
+        <label>Nome<input type="text" data-k="label" maxlength="40"></label>
+        <div class="row">
+          <label>Cor<input type="color" data-k="color"></label>
+          <label>Tamanho<select data-k="size"><option value="1">1×1</option><option value="2">2×2</option><option value="3">3×3</option><option value="4">4×4</option></select></label>
+        </div>
+        <label>Ficha ligada<select data-k="sheetId"></select></label>
+        <div class="row">
+          <label class="btn">Imagem<input id="tok-file" type="file" accept="image/*" hidden></label>
+          <button data-clear-img class="ghost">Sem imagem</button>
+          <button data-open-sheet>Abrir ficha</button>
+        </div>
+        <label class="chk gm-only"><input type="checkbox" data-k="hidden"> Escondido dos jogadores</label>
+        <label class="chk gm-only"><input type="checkbox" data-k="hideHp"> Esconder vida dos jogadores</label>
+        <div class="row">
+          <button data-front class="ghost">Trazer p/ frente</button>
+          <button data-back class="ghost">Enviar p/ trás</button>
+          <button data-del class="danger">Apagar</button>
+        </div>
+      </div>
+      <div id="toast"></div>
+    </div>
+
+    <aside class="side">
+      <nav class="tabs"><button class="on" data-tab="tab-chat">Chat & Dados</button><button data-tab="tab-sheets">Fichas</button></nav>
+      <section id="tab-chat" class="tab">
+        <div id="chat-log"></div>
+        <div class="dice-row">
+          <button data-die="1d4">d4</button><button data-die="1d6">d6</button><button data-die="1d8">d8</button>
+          <button data-die="1d10">d10</button><button data-die="1d12">d12</button><button data-die="1d20">d20</button><button data-die="1d100">d100</button>
+        </div>
+        <form id="chat-form">
+          <input id="chat-input" placeholder="Mensagem ou /r 2d20kh1+5" autocomplete="off">
+          <button>Enviar</button>
+        </form>
+        <div class="chat-opts">
+          <label class="chk"><input type="checkbox" id="secret-roll"> Rolagens secretas</label>
+          <span>Você: <b id="me-name"></b></span>
+          <button id="clear-chat" class="ghost mini">Limpar chat</button>
+        </div>
+      </section>
+      <section id="tab-sheets" class="tab" hidden>
+        <div class="sheet-actions"><button id="new-sheet" class="primary">＋ Nova ficha</button><button id="new-npc">＋ NPC</button></div>
+        <div id="sheet-list"></div>
+      </section>
+    </aside>
+  </div>
+
+  <div id="sheet-modal" class="modal" hidden>
+    <div class="modal-box">
+      <button id="sheet-close" class="close" title="Fechar">✕</button>
+      <div id="sheet-body"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
